@@ -5,7 +5,11 @@ var http = require('http');
 
 /* GET users listing. */
 router.get('/', function (req, res, next) {
-    getStockMethod();
+    getStockMethod().then(result => {
+        console.log("result", result);
+        res.json(result);
+    })
+
 });
 
 
@@ -51,10 +55,6 @@ function getStockMethod(stock_ids) {
     var timestamp = Date.now() + 1800;
 
     let stockInfoUrl = host + "/stock/api/getStockInfo.jsp?json=1&delay=0&_=" + timestamp + "&ex_ch=" + query_str;
-
-    // http://mis.twse.com.tw/stock/api/getStockInfo.jsp?json=1&delay=0&ex_ch=tse_1101.tw|tse_0050.tw
-    // http://mis.twse.com.tw/stock/api/getStockInfo.jsp?json=1&delay=0&_=1519713869431&ex_ch=tse_1101.tw|tse_0050.tw
-
 
     /* The TAIEX API is not stable so I need failover */
     var max_retry = 10
@@ -107,7 +107,7 @@ function getStockMethod(stock_ids) {
                 console.log("[second test]", bod);
                 // console.log(stockInfoUrl);
                 console.log("[body]", JSON.parse(bod));
-                resolve(bod);
+                resolve(JSON.parse(bod));
             })
         });
     });
